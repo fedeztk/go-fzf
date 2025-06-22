@@ -12,9 +12,11 @@ type KeyMap struct {
 }
 
 type keymap struct {
-	Up     key.Binding
-	Down   key.Binding
-	Toggle key.Binding
-	Choose key.Binding
-	Abort  key.Binding
+	Up        key.Binding
+	Down      key.Binding
+	Toggle    key.Binding
+	Choose    key.Binding
+	Abort     key.Binding
+	PagerUp   key.Binding
+	PagerDown key.Binding
 }

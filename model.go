@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/mattn/go-runewidth"
@@ -51,7 +52,10 @@ type model struct {
 	previewWindowWidth int
 
 	// components
-	input textinput.Model
+	input    textinput.Model
+	viewport viewport.Model
+
+	ready bool
 }
 
 func newModel(opt *option) *model {
@@ -342,17 +346,13 @@ func (m *model) itemView(match Match, cursorLine bool) string {
 }
 
 func (m *model) previewWindowView() string {
-	v := ""
 	if len(m.matches) > 0 {
-		v = m.findOption.previewWindowFunc(m.matches[m.cursorPosition].Index, m.previewWindowWidth, m.windowHeight)
+		m.viewport.SetContent(m.findOption.previewWindowFunc(m.matches[m.cursorPosition].Index, m.previewWindowWidth, m.windowHeight))
+	} else {
+		m.viewport.SetContent("")
 	}
 
-	return lipgloss.NewStyle().
-		Width(m.previewWindowWidth).
-		Height(m.windowHeight).
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderLeft(true).
-		Render(v)
+	return m.viewport.View()
 }
 
 /*
@@ -405,6 +405,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.fixYPosition()
 			m.fixCursor()
+		case key.Matches(msg, m.option.keymap.PagerUp):
+			m.viewport.LineUp(1)
+		case key.Matches(msg, m.option.keymap.PagerDown):
+			m.viewport.LineDown(1)
 		}
 	case tea.WindowSizeMsg:
 		// window
@@ -413,6 +417,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.fixYPosition()
 		m.fixCursor()
 		m.fixWidth()
+
+		if !m.ready {
+			m.viewport = viewport.New(msg.Width, msg.Height)
+			m.ready = true
+		}
 	case watchReloadMsg:
 		// watch reload
 		return m, m.watchReload()

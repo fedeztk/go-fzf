@@ -23,11 +23,13 @@ var defaultOption = option{
 	styles:           NewStyles(),
 
 	keymap: &keymap{
-		Up:     key.NewBinding(key.WithKeys("up", "ctrl+p")),
-		Down:   key.NewBinding(key.WithKeys("down", "ctrl+n")),
-		Toggle: key.NewBinding(key.WithKeys("tab")),
-		Choose: key.NewBinding(key.WithKeys("enter")),
-		Abort:  key.NewBinding(key.WithKeys("ctrl+c", "esc")),
+		Up:        key.NewBinding(key.WithKeys("up", "ctrl+p", "ctrl+k")),
+		Down:      key.NewBinding(key.WithKeys("down", "ctrl+n", "ctrl+j")),
+		Toggle:    key.NewBinding(key.WithKeys("tab")),
+		Choose:    key.NewBinding(key.WithKeys("enter")),
+		Abort:     key.NewBinding(key.WithKeys("ctrl+c", "esc")),
+		PagerUp:   key.NewBinding(key.WithKeys("ctrl+up")),
+		PagerDown: key.NewBinding(key.WithKeys("ctrl+down")),
 	},
 
 	inputPosition: InputPositionTop,
